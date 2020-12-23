@@ -64,7 +64,7 @@ def ip_module_hooks(request):
     global vars, tg_handler, tg
     # Min topology verification
     st.log("Ensuring minimum topology")
-    vars = st.ensure_min_topology("D1T1:4", "D2T1:2", "D1D2:4")
+    vars = st.ensure_min_topology("D1T1:2", "D2T1:2", "D1D2:4")
     # Initialize TG and TG port handlers
     tg_handler = tgapi.get_handles_byname("T1D1P1", "T1D1P2", "T1D2P1", "T1D2P2")
     tg = tg_handler["tg"]

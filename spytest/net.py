@@ -3094,6 +3094,10 @@ class Net(object):
                 self.wait(self.cfg.reboot_wait)
             if ret_logs:
                 return output
+            if "INFRA_SYS_CHK: system status is not online" in output:
+                err_msg = "INFRA_SYS_CHK: system status is not online even after waiting for {} sec".format(self.cfg.port_init_wait)
+                self.dut_log(devname, err_msg)
+                return False
             return True
 
         reboot_status = False
@@ -3861,8 +3865,15 @@ class Net(object):
                     local_file_path = self.make_local_file_path(devname, value_list[0],
                                              os.path.basename(remote_file_path))
                     # Perform the file download if any files found.
-                    retval = self._download_file(access, remote_file_path, local_file_path)
-                    if re.search("FAIL", retval):
+                    for _ in range(2):
+                        retval = self._download_file(access, remote_file_path, local_file_path)
+                        if re.search("FAIL", retval):
+                            fail_flag = True
+                            continue
+                        else:
+                            fail_flag = False
+                            break
+                    if fail_flag:
                         self.add_pending_download(devname, remote_file_path, local_file_path)
                         msg = "Downloading tech-support files - Failed."
                         self.dut_log(devname, msg, lvl=logging.ERROR)
@@ -5077,7 +5088,9 @@ class Net(object):
                     prompt = self._find_prompt(access)
             if prompt != expected_prompt:
                 self._enter_linux(devname, prompt)
-                self.do_post_reboot(devname)
+                if not self.do_post_reboot(devname):
+                    err_msg = "INFRA_SYS_CHK: system status is not online even after waiting for {} sec".format(self.cfg.port_init_wait)
+                    output = output + "\n" + err_msg + "\n"
                 self._tryssh_switch(devname, True)
             else:
                 self._tryssh_switch(devname, False)

@@ -161,9 +161,7 @@ def base_unconfig():
 @pytest.fixture(scope="function")
 def vrf_fixture_vrf_scale(request,prologue_epilogue):
     yield
-    dict1 = {'vrf_name':['Vrf-red'],'skip_error':True,'config':'no'}
-    parallel.exec_parallel(True, [data.dut1, data.dut2], vrf_api.config_vrf, [dict1, dict1])
-
+    st.log('###### -----Started UnConfig  ------######')
 def test_vrf_scale(vrf_fixture_vrf_scale):
 
     result = 0

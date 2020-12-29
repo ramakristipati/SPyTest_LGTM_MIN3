@@ -1433,10 +1433,10 @@ class ScapyPacket(object):
         """.format(ns, sh_file))
         self.utils.shexec(cmds)
 
-        cmds = textwrap.dedent("""
-            ip netns exec ns_{0} bash {1}
-        """.format(ns, ip_cmdfile))
-        self.utils.shexec(cmds)
+        #cmds = textwrap.dedent("""
+            #ip netns exec ns_{0} bash {1}
+        #""".format(ns, ip_cmdfile))
+        #self.utils.shexec(cmds)
 
         self.logger.info(self.utils.cat_file(envfile))
         self.logger.info(self.utils.cat_file(cfgfile))
